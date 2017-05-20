@@ -1,5 +1,7 @@
 body {
 	font-family: helvetica, sans-serif;
+	
+	overflow-y: scroll;
 }
 
 p, h3 {
@@ -10,6 +12,18 @@ p, h3 {
 	border: solid 1px #333;
 }
 
+.title-row {
+	margin: 20px auto;
+	font-size: 1.5em; 
+}
+
+.people-container {
+	max-height: 80vh;
+}
+
 .person-card {
-	padding-top: 25px;
+	height: 125px;
+	padding: 25px;
+	border-radius: 10px;
+	margin-bottom: 10px;
 }

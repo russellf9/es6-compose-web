@@ -12,14 +12,6 @@ require([
 		'bootstrap'
   ],
   function (_, $) {
-
-			//
-		// <div>
-		// 	<div class="name">
-		// 		<p>title first last</p>
-		//
-		// 	</div>
-		// </div>
 		
     var Impure = {
       getJSON: _.curry(function(callback, url) {
@@ -36,72 +28,72 @@ require([
         return x;
     })
 		
-		const createList = () => {
-			return $('<ul></ul>');
-		}
-		
-		const appendToList = (container, value, tag) => {
-			return $(container).append(`<div>${value}</div>`);
-		}
-		
+		// ==== STATE ====
+    var url = () => { return 'https://randomuser.me/api/?results=5'; };
+
+		// ==== JQUERY HELPERS ====
 		const append = (container, value) => {
 			return $(container).append(value)
 		}
-		
-		
-		const createParagraph = () => {
-			return $('<p></p>')
-		}
-		
-		const createPersonContainer = '<div></div>'
-		
+	
 
+		// ==== JQUERY ELEMENTS ====
+    var img = (url) => { return $('<img />', { src: url }); };
 		
-    var img = function (url) {
-       return $('<img />', { src: url });
-    };
 		
-		/*
-			<div class="row">
-				<div class="col-sm-6 col-sm-offset-3 person-card grey-border">
-					
-					<div class="thumbnail pull-right">
-					    <img src="https://randomuser.me/api/portraits/med/women/54.jpg">
-					</div>
-		      <div class="caption pull-left">
-		        <h3>mrs alice smith</h3>
-		        <p>content</p>
-		    	</div>
-			</div>
-		*/
 		
+		// ==== BOOTSTRAP ELEMENTS ====
+		const createPersonContainer = `<div class="col-sm-6 col-sm-offset-3">
+																		</div>`
+		const getRow = () => { return $(`<div class="row"></div>`) }
+		const getCard = () => { return $(`<div class="person-card grey-border">`)}
+		const getThumb = () => { return $(`<div class="thumbnail pull-right"></div>`)}
+		
+		
+		// ==== GET DATA FROM JSON RESPONSE ====
 		const getTitle = _.compose(_.prop('title'), _.prop('name'));
 		const getFirstName = _.compose(_.prop('first'), _.prop('name'));
 		const getLastName = _.compose(_.prop('last'), _.prop('name'));
 		const getThumbnail = _.compose(_.prop('thumbnail'), _.prop('picture'))
 	
+		
+		// ==== UTILITY COMPOSITIONS ====
+		const createImage = _.compose(img, getThumbnail)
+	
+		// ==== HTML CREATION ====
 		const createName = (value) => {
 			const title = getTitle(value)
 			const firstName = getFirstName(value)
 			const lastName = getLastName(value)
-			return $(`<p class="person-name">${title} ${firstName} ${lastName}</p>`)
+			return $(`
+				<div class="caption pull-left">
+					 <h3 class="person-name">${title} ${firstName} ${lastName}</h3>
+							<p>content</p>
+				</div>
+				`)
 		}
-		const createImage = _.compose(img, getThumbnail)
-			
+	
 		const addParagraph = (accum, value) => {
-			const element = createName(value)
+			const row = getRow()
+			const card = getCard()
+			const name = createName(value)
+			const thumb = getThumb()
 			const image = createImage(value)
-			append(element, image)				
-			return append(accum, element)
+			
+			append(thumb, image)	
+			append(card, thumb)		
+			append(card, name)
+			append(row, card)	
+				
+			return append(accum, row)
 		}
+		
+		// ==== REDRAW THE APP CONTENT ===
 		
 		const createPerson = _.compose(addParagraph)
 		const people = _.compose(_.reduce(createPerson, createPersonContainer), _.prop('results'))
 		const renderPeople = _.compose(Impure.setHtml('#list'), people)
 		
-    var url = function (t) {
-      return 'https://randomuser.me/api/?results=5';
-    };
 		
 		var app = _.compose(Impure.getJSON(renderPeople), url)
 		

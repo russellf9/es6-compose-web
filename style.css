@@ -1,0 +1,15 @@
+body {
+	font-family: helvetica, sans-serif;
+}
+
+p, h3 {
+	text-transform: capitalize;
+}
+
+.grey-border {
+	border: solid 1px #333;
+}
+
+.person-card {
+	padding-top: 25px;
+}
